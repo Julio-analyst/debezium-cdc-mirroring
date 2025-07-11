@@ -8,7 +8,21 @@
 
 This project demonstrates a **real-time data replication** architecture using **Debezium** and **Apache Kafka** to capture changes (CDC) from a PostgreSQL source database and mirror them into a PostgreSQL target database.
 
-Ideal for:
+---
+
+## 💡 Why CDC & Streaming?
+
+Synchronizing data across systems in real time is a challenge.
+Traditional ETL tools introduce latency, and direct queries often overload production databases.
+
+**Debezium** offers a **non-intrusive, log-based mechanism** to stream changes efficiently using Kafka — making it ideal for:
+- Real-time backups
+- Microservice synchronization
+- Streaming data to analytics pipelines
+
+---
+
+## 🔗 Data Flow Architecture
 - Event-driven architectures
 - Streaming analytics pipelines
 - Backup/mirroring from production DB

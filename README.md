@@ -1,4 +1,4 @@
-# 📡 Debezium CDC Mirroring: Real-time PostgreSQL Replication
+# 📱 Debezium CDC Mirroring: Real-time PostgreSQL Replication
 
 > Log-based data replication pipeline using Debezium, Kafka, Kafka Connect, and PostgreSQL.
 
@@ -8,10 +8,14 @@
 
 This project demonstrates a **real-time data replication** architecture using **Debezium** and **Apache Kafka** to capture changes (CDC) from a PostgreSQL source database and mirror them into a PostgreSQL target database.
 
-**Context:**
+### 🌐 Context:
 
-* The **source** is a PostgreSQL database named `inventory`, using schema `inventory` and table `orders`.
-* The **target** is another PostgreSQL database named `postgres`, using schema `public` and table `orders`.
+* **Source DB**: `inventory`
+* **Source Schema**: `inventory`
+* **Source Table**: `orders`
+* **Target DB**: `postgres`
+* **Target Schema**: `public`
+* **Target Table**: `orders`
 
 ---
 
@@ -48,9 +52,9 @@ Traditional ETL tools introduce latency, and direct queries often overload produ
 
 ```
 👠 debezium-cdc-mirroring/
-├─ docker-compose-postgres.yaml        # Main deployment file
-├─ inventory-source.json             # Debezium connector config
-├─ pg-sink.json                     # JDBC sink config
+├─ docker-compose-postgres.yaml         # Main deployment file
+├─ inventory-source.json                # Debezium connector config
+├─ pg-sink.json                         # JDBC sink config
 ├─ jdbc-sink.json (optional)
 ├─ plugins/
 │   ├─ debezium-connector-postgres/
@@ -79,7 +83,7 @@ curl -X POST -H "Content-Type: application/json" --data "@pg-sink.json" http://l
 
 ### ✅ Step 3: Check Source Table Structure
 
-```sql
+```bash
 docker exec -it debezium-cdc-mirror-postgres-1 psql -U postgres -d inventory
 \d inventory.orders
 ```
@@ -98,24 +102,38 @@ ALTER TABLE inventory.orders DROP CONSTRAINT IF EXISTS orders_product_id_fkey;
 ALTER TABLE inventory.orders ADD COLUMN keterangan TEXT DEFAULT '';
 ```
 
-### ✅ Step 6: Insert Test Data
+### ✅ Step 6: Perform CRUD Operations
+
+#### 🔹 Insert
 
 ```sql
 INSERT INTO inventory.orders(order_date, purchaser, quantity, product_id, keterangan)
 VALUES ('2025-07-08', 999, 3, 999, 'CDC TEST');
 ```
 
+#### 🔹 Update
+
+```sql
+UPDATE inventory.orders
+SET keterangan = 'UPDATED FROM SOURCE'
+WHERE purchaser = 999;
+```
+
+#### 🔹 Delete
+
+```sql
+DELETE FROM inventory.orders
+WHERE purchaser = 999;
+```
+
 ---
 
-## 📡 View Events and Validate
+## 🛡️ View Events and Validate
 
 ### 🔍 Option A: Via CMD
 
 ```bash
-docker exec -it kafka-tools kafka-console-consumer \
-  --bootstrap-server kafka:9092 \
-  --topic dbserver1.inventory.orders \
-  --from-beginning
+docker exec -it kafka-tools kafka-console-consumer --bootstrap-server kafka:9092 --topic dbserver1.inventory.orders --from-beginning
 ```
 
 ### 🌐 Option B: Via Web UI (Kafdrop)

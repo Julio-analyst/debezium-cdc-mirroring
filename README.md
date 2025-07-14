@@ -8,6 +8,11 @@
 
 This project demonstrates a **real-time data replication** architecture using **Debezium** and **Apache Kafka** to capture changes (CDC) from a PostgreSQL source database and mirror them into a PostgreSQL target database.
 
+**Context:**
+
+* The **source** is a PostgreSQL database named `inventory`, using schema `inventory` and table `orders`.
+* The **target** is another PostgreSQL database named `postgres`, using schema `public` and table `orders`.
+
 ---
 
 ## 💡 Why CDC & Streaming?
@@ -16,17 +21,10 @@ Synchronizing data across systems in real time is a challenge.
 Traditional ETL tools introduce latency, and direct queries often overload production databases.
 
 **Debezium** offers a **non-intrusive, log-based mechanism** to stream changes efficiently using Kafka — making it ideal for:
-- Real-time backups
-- Microservice synchronization
-- Streaming data to analytics pipelines
 
----
-
-## 🔗 Data Flow Architecture
-- Event-driven architectures
-- Streaming analytics pipelines
-- Backup/mirroring from production DB
-- Synchronizing services or downstream systems
+* Real-time backups
+* Microservice synchronization
+* Streaming data to analytics pipelines
 
 ---
 
@@ -37,11 +35,12 @@ Traditional ETL tools introduce latency, and direct queries often overload produ
 ```
 
 **Components:**
-- **Postgres Source**: Origin DB using WAL (Write-Ahead Log)
-- **Debezium**: Captures changes in real time
-- **Kafka Broker + Zookeeper**: Streams changes across connectors
-- **Kafka Connect (JDBC Sink)**: Pushes data to target
-- **Postgres Target**: Receives updates
+
+* **Postgres Source**: Origin DB using WAL (Write-Ahead Log)
+* **Debezium**: Captures changes in real time
+* **Kafka Broker + Zookeeper**: Streams changes across connectors
+* **Kafka Connect (JDBC Sink)**: Pushes data to target
+* **Postgres Target**: Receives updates
 
 ---
 
@@ -63,95 +62,139 @@ Traditional ETL tools introduce latency, and direct queries often overload produ
 
 ## 🚀 Quick Start Guide
 
-### 1. Clone & Start
+### ✅ Step 1: Clone & Spin Up Docker
+
 ```bash
 git clone https://github.com/Julio-analyst/debezium-cdc-mirroring.git
 cd debezium-cdc-mirroring
 docker compose -f docker-compose-postgres.yaml up -d
 ```
 
-### 2. Prepare Source Database
-```sql
--- Enter DB container
-docker exec -it debezium-cdc-mirror-postgres-1 psql -U postgres -d inventory
+### ✅ Step 2: Register Connectors & Check Connection
 
--- Optional: Drop constraints for demo
+```bash
+curl -X POST -H "Content-Type: application/json" --data "@inventory-source.json" http://localhost:8083/connectors
+curl -X POST -H "Content-Type: application/json" --data "@pg-sink.json" http://localhost:8083/connectors
+```
+
+### ✅ Step 3: Check Source Table Structure
+
+```sql
+docker exec -it debezium-cdc-mirror-postgres-1 psql -U postgres -d inventory
+\d inventory.orders
+```
+
+### ✅ Step 4: Check Existing Data
+
+```sql
+SELECT * FROM inventory.orders;
+```
+
+### ✅ Step 5: Modify Source Table (Optional for CRUD Testing)
+
+```sql
+ALTER TABLE inventory.orders DROP CONSTRAINT IF EXISTS orders_purchaser_fkey;
 ALTER TABLE inventory.orders DROP CONSTRAINT IF EXISTS orders_product_id_fkey;
 ALTER TABLE inventory.orders ADD COLUMN keterangan TEXT DEFAULT '';
+```
 
--- Insert sample data
+### ✅ Step 6: Insert Test Data
+
+```sql
 INSERT INTO inventory.orders(order_date, purchaser, quantity, product_id, keterangan)
-VALUES ('2025-07-09', 4321, 5, 9999, 'CDC mirror test OK');
-```
-
-### 3. Register Connectors
-```bash
-# Debezium source connector
-curl -X POST -H "Content-Type: application/json" \
-     --data "@inventory-source.json" \
-     http://localhost:8083/connectors
-
-# JDBC sink connector
-curl -X POST -H "Content-Type: application/json" \
-     --data "@pg-sink.json" \
-     http://localhost:8083/connectors
-```
-
-### 4. Verify Replication
-```bash
-docker exec -it debezium-cdc-mirror-target-postgres-1 psql -U postgres -d postgres
-SELECT * FROM orders;
+VALUES ('2025-07-08', 999, 3, 999, 'CDC TEST');
 ```
 
 ---
 
-## 🪨 Key Concepts & Notes
+## 📡 View Events and Validate
 
-- `inventory-source.json`: Debezium config (WAL-based)
-- `pg-sink.json`: JDBC sink config w/ `transformations`, `insert.mode=upsert`
-- `Kafdrop`: Web UI to monitor Kafka topics (if enabled)
-- `keterangan` field: added for metadata validation in mirrored data
+### 🔍 Option A: Via CMD
+
+```bash
+docker exec -it kafka-tools kafka-console-consumer \
+  --bootstrap-server kafka:9092 \
+  --topic dbserver1.inventory.orders \
+  --from-beginning
+```
+
+### 🌐 Option B: Via Web UI (Kafdrop)
+
+Access: [http://localhost:9000](http://localhost:9000)
+
+* Inspect topics, partitions, and payload in browser
+
+### 🔧 Check Running Connectors
+
+```bash
+curl http://localhost:8083/connectors
+```
 
 ---
 
-## 🥇 Features & Benefits
+## 🛑 Shutdown & Clean Up
 
-| ✅ Advantages                        | ⚠️ Limitations                    |
-|-------------------------------------|-------------------------------------|
-| Near real-time streaming            | Initial setup complexity             |
-| Decoupled microservice-friendly     | Kafka & connector learning curve     |
-| Highly extensible (sink any target) | Potential latency under heavy load   |
-| Supports insert/update/delete       | Connector tuning may be required     |
+After you're done:
+
+```bash
+docker compose -f docker-compose-postgres.yaml down -v
+```
+
+**⚠️ Don’t forget to stop containers after use to avoid memory or port issues.**
+
+---
+
+## ✅ Optional: Connect via DBeaver
+
+> Create a PostgreSQL connection for both source and sink:
+
+### 🔹 Source (inventory):
+
+* Host: `localhost`
+* Port: `5432`
+* Database: `inventory`
+* User: `postgres`
+* Password: `postgres`
+
+### 🔹 Target (postgres):
+
+* Host: `localhost`
+* Port: `5433`
+* Database: `postgres`
+* User: `postgres`
+* Password: `postgres`
+
+Click **Test Connection**, then **Finish**.
 
 ---
 
 ## 🛠️ Tech Stack
 
-- Debezium 2.6
-- Apache Kafka & Kafka Connect (Confluent)
-- PostgreSQL
-- Docker Compose
-- Kafdrop (UI)
+* Debezium 2.6
+* Apache Kafka & Kafka Connect (Confluent)
+* PostgreSQL
+* Docker Compose
+* Kafdrop (Web UI)
 
 ---
 
 ## 📖 References
 
-- [Debezium Docs](https://debezium.io/documentation/)
-- [Kafka Connect JDBC Sink](https://docs.confluent.io/kafka-connect-jdbc/current/index.html)
-- [Docker Compose](https://docs.docker.com/compose/)
+* [Debezium Docs](https://debezium.io/documentation/)
+* [Kafka Connect JDBC Sink](https://docs.confluent.io/kafka-connect-jdbc/current/index.html)
+* [Docker Compose](https://docs.docker.com/compose/)
 
 ---
 
 ## 📄 License
 
-MIT License  
+MIT License
 © 2025 Julio-analyst
 
 ---
 
 ## 📬 Contact
 
-- 🌐 [LinkedIn](https://www.linkedin.com/in/farrel-julio-427143288)  
-- 📂 [Portfolio (Notion)](https://linktr.ee/Julio-analyst)  
-- ✉️ farelrel12345@gmail.com
+* 🌐 [LinkedIn](https://www.linkedin.com/in/farrel-julio-427143288)
+* 📂 [Portfolio (Notion)](https://linktr.ee/Julio-analyst)
+* ✉️ [farelrel12345@gmail.com](mailto:farelrel12345@gmail.com)

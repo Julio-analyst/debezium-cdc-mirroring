@@ -150,10 +150,7 @@ SELECT * FROM public.orders;
 ### 🔍 Option A: Via CMD
 
 ```bash
-docker exec -it kafka-tools kafka-console-consumer \
-  --bootstrap-server kafka:9092 \
-  --topic dbserver1.inventory.orders \
-  --from-beginning
+docker exec -it kafka-tools kafka-console-consumer --bootstrap-server kafka:9092 --topic dbserver1.inventory.orders --from-beginning
 ```
 
 ### 🌐 Option B: Via Web UI (Kafdrop)

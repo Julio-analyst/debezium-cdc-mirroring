@@ -17,12 +17,13 @@ This project demonstrates a **real-time data replication** architecture using **
 * **Target Schema**: `public`
 * **Target Table**: `orders`
 
+📌 *Note: You can skip dropping foreign keys by pre-populating the referenced data. See example datasets below.*
+
 ---
 
 ## 💡 Why CDC & Streaming?
 
-Synchronizing data across systems in real time is a challenge.
-Traditional ETL tools introduce latency, and direct queries often overload production databases.
+Synchronizing data across systems in real time is a challenge. Traditional ETL tools introduce latency, and direct queries often overload production databases.
 
 **Debezium** offers a **non-intrusive, log-based mechanism** to stream changes efficiently using Kafka — making it ideal for:
 
@@ -59,6 +60,8 @@ Traditional ETL tools introduce latency, and direct queries often overload produ
 ├─ plugins/
 │   ├─ debezium-connector-postgres/
 │   └─ confluentinc-kafka-connect-jdbc/
+├─ docs/
+│   └─ erd.png                          # Entity Relationship Diagram (ERD)
 └─ README.md
 ```
 
@@ -126,6 +129,20 @@ DELETE FROM inventory.orders
 WHERE purchaser = 999;
 ```
 
+📌 *Alternative to dropping FK: Pre-insert into `customers` and `products`:*
+
+```sql
+INSERT INTO inventory.customers(id, first_name, last_name, email) VALUES (999, 'Dummy', 'Customer', 'dummy@mail.com');
+INSERT INTO inventory.products(id, name, description, weight) VALUES (999, 'Dummy Product', 'test', 1);
+```
+
+### ✅ Step 7: Check Replication Result in Target DB
+
+```bash
+docker exec -it debezium-cdc-mirror-target-postgres-1 psql -U postgres -d postgres
+SELECT * FROM public.orders;
+```
+
 ---
 
 ## 🛡️ View Events and Validate
@@ -133,7 +150,10 @@ WHERE purchaser = 999;
 ### 🔍 Option A: Via CMD
 
 ```bash
-docker exec -it kafka-tools kafka-console-consumer --bootstrap-server kafka:9092 --topic dbserver1.inventory.orders --from-beginning
+docker exec -it kafka-tools kafka-console-consumer \
+  --bootstrap-server kafka:9092 \
+  --topic dbserver1.inventory.orders \
+  --from-beginning
 ```
 
 ### 🌐 Option B: Via Web UI (Kafdrop)
@@ -150,12 +170,16 @@ curl http://localhost:8083/connectors
 
 ---
 
-## 🛑 Shutdown & Clean Up
+## 🚩 Shutdown & Clean Up
 
 After you're done:
 
 ```bash
+# Option A (with volume deletion)
 docker compose -f docker-compose-postgres.yaml down -v
+
+# Option B (keep volume data)
+docker compose -f docker-compose-postgres.yaml down
 ```
 
 **⚠️ Don’t forget to stop containers after use to avoid memory or port issues.**
@@ -183,6 +207,27 @@ docker compose -f docker-compose-postgres.yaml down -v
 * Password: `postgres`
 
 Click **Test Connection**, then **Finish**.
+
+---
+
+## 🗂️ ERD & Sample Data
+
+### 🧩 ERD
+
+> Below is the simplified ERD of the source `inventory` database.
+
+![ERD](docs/erd.png)
+
+### 📌 Sample Data Extract
+
+```sql
+-- Sample: customers
+SELECT * FROM inventory.customers;
+-- Sample: products
+SELECT * FROM inventory.products;
+-- Sample: orders
+SELECT * FROM inventory.orders;
+```
 
 ---
 
@@ -216,3 +261,4 @@ MIT License
 * 🌐 [LinkedIn](https://www.linkedin.com/in/farrel-julio-427143288)
 * 📂 [Portfolio (Notion)](https://linktr.ee/Julio-analyst)
 * ✉️ [farelrel12345@gmail.com](mailto:farelrel12345@gmail.com)
+

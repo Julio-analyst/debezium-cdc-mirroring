@@ -87,7 +87,7 @@ curl -X POST -H "Content-Type: application/json" --data "@pg-sink.json" http://l
 ### ✅ Step 3: Check Source Table Structure
 
 ```bash
-docker exec -it debezium-cdc-mirror-postgres-1 psql -U postgres -d inventory
+docker exec -it debezium-cdc-mirroring-postgres-1 psql -U postgres -d inventory
 \d inventory.orders
 ```
 
@@ -111,7 +111,7 @@ ALTER TABLE inventory.orders ADD COLUMN keterangan TEXT DEFAULT '';
 
 ```sql
 INSERT INTO inventory.orders(order_date, purchaser, quantity, product_id, keterangan)
-VALUES ('2025-07-08', 999, 3, 999, 'CDC TEST');
+VALUES ('2025-07-08', 1002, 3, 107, 'CDC TEST');
 ```
 
 #### 🔹 Update
@@ -139,7 +139,7 @@ INSERT INTO inventory.products(id, name, description, weight) VALUES (999, 'Dumm
 ### ✅ Step 7: Check Replication Result in Target DB
 
 ```bash
-docker exec -it debezium-cdc-mirror-target-postgres-1 psql -U postgres -d postgres
+docker exec -it debezium-cdc-mirroring-target-postgres-1 psql -U postgres -d postgres
 SELECT * FROM public.orders;
 ```
 

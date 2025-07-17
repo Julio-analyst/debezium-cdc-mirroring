@@ -73,7 +73,7 @@ Synchronizing data across systems in real time is a challenge. Traditional ETL t
 
 ```bash
 git clone https://github.com/Julio-analyst/debezium-cdc-mirroring.git
-cd debezium-cdc-mirror/
+cd debezium-cdc-mirroring/
 docker compose -f docker-compose-postgres.yaml up -d
 ```
 

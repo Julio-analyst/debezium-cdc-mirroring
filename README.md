@@ -21,18 +21,6 @@ This project demonstrates a **real-time data replication** architecture using **
 
 ---
 
-## 💡 Why CDC & Streaming?
-
-Synchronizing data across systems in real time is a challenge. Traditional ETL tools introduce latency, and direct queries often overload production databases.
-
-**Debezium** offers a **non-intrusive, log-based mechanism** to stream changes efficiently using Kafka — making it ideal for:
-
-* Real-time backups
-* Microservice synchronization
-* Streaming data to analytics pipelines
-
----
-
 ## 🔗 Data Flow Architecture
 
 ```
@@ -46,24 +34,6 @@ Synchronizing data across systems in real time is a challenge. Traditional ETL t
 * **Kafka Broker + Zookeeper**: Streams changes across connectors
 * **Kafka Connect (JDBC Sink)**: Pushes data to target
 * **Postgres Target**: Receives updates
-
----
-
-## 📁 Project Structure
-
-```
-👠 debezium-cdc-mirroring/
-├─ docker-compose-postgres.yaml         # Main deployment file
-├─ inventory-source.json                # Debezium connector config
-├─ pg-sink.json                         # JDBC sink config
-├─ jdbc-sink.json (optional)
-├─ plugins/
-│   ├─ debezium-connector-postgres/
-│   └─ confluentinc-kafka-connect-jdbc/
-├─ docs/
-│   └─ erd.png                          # Entity Relationship Diagram (ERD)
-└─ README.md
-```
 
 ---
 
@@ -207,13 +177,7 @@ Click **Test Connection**, then **Finish**.
 
 ---
 
-## 🗂️ ERD & Sample Data
-
-### 🧩 ERD
-
-> Below is the simplified ERD of the source `inventory` database.
-
-![ERD](docs/erd.png)
+## 🗂️ Sample Data
 
 ### 📌 Sample Data Extract
 
@@ -225,37 +189,3 @@ SELECT * FROM inventory.products;
 -- Sample: orders
 SELECT * FROM inventory.orders;
 ```
-
----
-
-## 🛠️ Tech Stack
-
-* Debezium 2.6
-* Apache Kafka & Kafka Connect (Confluent)
-* PostgreSQL
-* Docker Compose
-* Kafdrop (Web UI)
-
----
-
-## 📖 References
-
-* [Debezium Docs](https://debezium.io/documentation/)
-* [Kafka Connect JDBC Sink](https://docs.confluent.io/kafka-connect-jdbc/current/index.html)
-* [Docker Compose](https://docs.docker.com/compose/)
-
----
-
-## 📄 License
-
-MIT License
-© 2025 Julio-analyst
-
----
-
-## 📬 Contact
-
-* 🌐 [LinkedIn](https://www.linkedin.com/in/farrel-julio-427143288)
-* 📂 [Portfolio (Notion)](https://linktr.ee/Julio-analyst)
-* ✉️ [farelrel12345@gmail.com](mailto:farelrel12345@gmail.com)
-

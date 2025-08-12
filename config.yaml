@@ -1,0 +1,51 @@
+# CDC Dynamic Stress Test Configuration
+# This file allows you to configure the test environment without hardcoding values
+
+database:
+  host: localhost
+  port: 5432
+  user: postgres
+  password: postgres
+  database: inventory
+  schema: inventory
+
+# Target database for CDC validation (if different from source)
+target_database:
+  host: localhost
+  port: 5433  # Different port for target
+  user: postgres
+  password: postgres
+  database: postgres
+  schema: inventory
+
+# Test configuration
+test_settings:
+  default_batch_size: 100
+  default_records: 1000
+  max_retries: 3
+  timeout_seconds: 300
+  log_level: INFO
+
+# Docker configuration
+docker:
+  # Container names will be auto-discovered if not specified
+  # You can override specific container names here
+  containers:
+    - debezium-cdc-mirroring-postgres-1
+    - tutorial-connect-1
+    - kafka
+    - zookeeper
+    - kafdrop
+
+# Performance thresholds
+performance:
+  min_ops_per_second: 100
+  max_acceptable_lag_ms: 1000
+  max_error_rate_percent: 5
+
+# Monitoring settings
+monitoring:
+  enable_docker_logs: true
+  enable_memory_tracking: true
+  enable_latency_tracking: true
+  save_detailed_logs: true

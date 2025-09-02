@@ -85,7 +85,7 @@ Synchronizing data across systems in real time is a challenge. Traditional ETL t
 ## 📁 Project Structure
 
 ```
-� debezium-cdc-mirroring/
+ debezium-cdc-mirroring/
 ├─ docker-compose-postgres.yaml         # Main deployment file
 ├─ inventory-source.json                # Debezium connector config
 ├─ pg-sink.json                         # JDBC sink config
@@ -128,8 +128,12 @@ curl -X POST -H "Content-Type: application/json" --data "@pg-sink.json" http://l
 
 
 
+
 <br>
 <img src="docs/insert.gif" alt="Insert Test Animation" style="max-width:100%;height:auto;display:block;margin:auto;" loading="eager">
+=======
+<b>Insert Test Animation:</b><br>
+<img src="docs/insertvid-new.gif" alt="Insert Test Animation" style="max-width:100%;height:auto;display:block;margin:auto;" loading="eager">
 
 ```powershell
 # Set execution policy (jika diperlukan)
@@ -143,6 +147,9 @@ Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 
 <br>
 <img src="docs/monitor.gif" alt="Monitoring Animation" style="max-width:100%;height:auto;display:block;margin:auto;" loading="eager">
+=======
+<b>Monitoring Animation:</b><br>
+<img src="docs/monitoringvid-new.gif" alt="Monitoring Animation" style="max-width:100%;height:auto;display:block;margin:auto;" loading="eager">
 
 ```powershell
 # Monitor pipeline performance
@@ -259,7 +266,7 @@ Script `insert_debezium.ps1` melakukan stress test insert data ke database sourc
 - Resource monitoring per batch
 - Automatic logging ke folder `testing-results/`
 
-### � Pipeline Monitoring  
+###  Pipeline Monitoring  
 Script `monitoring_debezium.ps1` memberikan monitoring komprehensif:
 - Container health dan resource usage
 - Database connection dan performance
@@ -282,7 +289,7 @@ Average Batch Time: 184.45ms
 Sync Status: SYNCHRONIZED
 ```
 
-### � Documentation
+###  Documentation
 - **[Scripts Quick Reference](docs/Scripts-Quick-Reference.md)** - Panduan penggunaan lengkap
 - **[Scripts Documentation](docs/Scripts-Documentation.md)** - Analisis output dan hasil
 

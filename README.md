@@ -131,12 +131,17 @@ Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 # Jalankan insert test
 .\scripts\insert_debezium.ps1
 
-https://github.com/user-attachments/assets/insertvid.mp4
+.\scripts\monitoring_debezium.ps1
+<br>
+<b>Insert Test Video:</b><br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/cQlE0aZfuK8?autoplay=1" title="Insert Test Video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 # Monitor pipeline performance
 .\scripts\monitoring_debezium.ps1
 
-https://github.com/user-attachments/assets/monitoringvid.mp4
+<br>
+<b>Monitoring Video:</b><br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/YApYVxAmm0c?autoplay=1" title="Monitoring Video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 ```
 
 **Custom Insert Parameters:**

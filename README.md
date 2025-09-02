@@ -1,4 +1,4 @@
-# 📱 Debezium CDC Mirroring: Real-time PostgreSQL Replication
+#  Debezium CDC Mirroring: Real-time PostgreSQL Replication
 
 > Log-based data replication pipeline using Debezium, Kafka, Kafka Connect, and PostgreSQL with dynamic testing capabilities.
 

@@ -126,8 +126,9 @@ curl -X POST -H "Content-Type: application/json" --data "@pg-sink.json" http://l
 
 ## PowerShell Scripts
 
-<b>Insert Test Video:</b><br>
-<iframe width="560" height="315" src="https://www.youtube.com/embed/cQlE0aZfuK8?autoplay=1" title="Insert Test Video" frameborder="0" allowfullscreen></iframe>
+
+<b>Insert Test Animation:</b><br>
+<img src="docs/insert.gif" alt="Insert Test Animation" width="560" height="315">
 
 ```powershell
 # Set execution policy (jika diperlukan)
@@ -137,8 +138,9 @@ Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 .\scripts\insert_debezium.ps1
 ```
 
-<b>Monitoring Video:</b><br>
-<iframe width="560" height="315" src="https://www.youtube.com/embed/YApYVxAmm0c?autoplay=1" title="Monitoring Video" frameborder="0" allowfullscreen></iframe>
+
+<b>Monitoring Animation:</b><br>
+<img src="docs/monitor.gif" alt="Monitoring Animation" width="560" height="315">
 
 ```powershell
 # Monitor pipeline performance

@@ -2,6 +2,8 @@
 
 > Log-based data replication pipeline using Debezium, Kafka, Kafka Connect, and PostgreSQL with dynamic testing capabilities.
 
+![Cover Debezium CDC Pipeline](docs/cover%20debezium%20psql%20to%20psql.png)
+
 ## 🔧 **FINAL STATUS: COMPREHENSIVE MONITORING COMPLETE** 
 
 ✅ **ALL SCRIPTS VERIFIED & WORKING** - Semua script telah ditest dan berfungsi sempurna
@@ -83,16 +85,22 @@ Synchronizing data across systems in real time is a challenge. Traditional ETL t
 ## 📁 Project Structure
 
 ```
-👠 debezium-cdc-mirroring/
+� debezium-cdc-mirroring/
 ├─ docker-compose-postgres.yaml         # Main deployment file
 ├─ inventory-source.json                # Debezium connector config
 ├─ pg-sink.json                         # JDBC sink config
-├─ jdbc-sink.json (optional)
+├─ requirements.txt                     # Python dependencies
 ├─ plugins/
-│   ├─ debezium-connector-postgres/
-│   └─ confluentinc-kafka-connect-jdbc/
+│   ├─ debezium-connector-postgres/     # Debezium PostgreSQL connector
+│   └─ confluentinc-kafka-connect-jdbc/ # JDBC sink connector
+├─ scripts/
+│   ├─ insert_debezium.ps1             # Insert stress test script
+│   └─ monitoring_debezium.ps1          # Pipeline monitoring script
 ├─ docs/
-│   └─ erd.png                          # Entity Relationship Diagram (ERD)
+│   ├─ erd.png                          # Entity Relationship Diagram
+│   ├─ Scripts-Quick-Reference.md       # Usage guide
+│   └─ Scripts-Documentation.md         # Output analysis
+├─ testing-results/                     # Auto-generated logs
 └─ README.md
 ```
 
@@ -108,12 +116,68 @@ cd debezium-cdc-mirroring/
 docker compose -f docker-compose-postgres.yaml up -d
 ```
 
-### ✅ Step 2: Register Connectors & Check Connection
+### ✅ Step 2: Register Connectors & Run Scripts
 
 ```bash
 curl -X POST -H "Content-Type: application/json" --data "@inventory-source.json" http://localhost:8083/connectors
 curl -X POST -H "Content-Type: application/json" --data "@pg-sink.json" http://localhost:8083/connectors
 ```
+
+**PowerShell Scripts:**
+```powershell
+# Set execution policy (jika diperlukan)
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+
+# Jalankan insert test
+.\scripts\insert_debezium.ps1
+
+https://github.com/user-attachments/assets/insertvid.mp4
+
+# Monitor pipeline performance
+.\scripts\monitoring_debezium.ps1
+
+https://github.com/user-attachments/assets/monitoringvid.mp4
+```
+
+**Custom Insert Parameters:**
+```powershell
+# Test ringan
+.\scripts\insert_debezium.ps1 -RecordCount 500 -BatchSize 50
+
+# Test standar dengan progress
+.\scripts\insert_debezium.ps1 -RecordCount 2000 -BatchSize 200 -ShowProgress
+
+# Stress test
+.\scripts\insert_debezium.ps1 -RecordCount 10000 -BatchSize 1000 -DelayBetweenBatches 0
+```
+
+### ✅ Step 3: Check Connected Connectors
+
+Untuk melihat daftar connector yang sudah aktif di Kafka Connect:
+
+**PowerShell:**
+```powershell
+Invoke-WebRequest -Uri http://localhost:8083/connectors | Select-Object -ExpandProperty Content
+```
+
+**Command Prompt / Git Bash:**
+```bash
+curl http://localhost:8083/connectors
+```
+
+Untuk melihat status detail connector tertentu:
+
+**PowerShell:**
+```powershell
+Invoke-WebRequest -Uri http://localhost:8083/connectors/<NAMA_CONNECTOR>/status | Select-Object -ExpandProperty Content
+```
+
+**Command Prompt / Git Bash:**
+```bash
+curl http://localhost:8083/connectors/<NAMA_CONNECTOR>/status
+```
+
+Ganti `<NAMA_CONNECTOR>` dengan nama connector yang ingin dicek.
 
 ### ✅ Step 3: Check Source Table Structure
 
@@ -176,160 +240,63 @@ SELECT * FROM public.orders;
 
 ---
 
-## 🧪 Dynamic Performance Testing
+## 📊 Scripts & Monitoring
 
-### 🎯 Overview
+### 🚀 Insert Data Testing
+Script `insert_debezium.ps1` melakukan stress test insert data ke database source dengan fitur:
+- Real-time data fetching dari customers dan products
+- Configurable batch size dan record count
+- Resource monitoring per batch
+- Automatic logging ke folder `testing-results/`
 
-The project includes advanced **dynamic stress testing capabilities** that use real-time data from your database instead of hardcoded values. This ensures realistic testing scenarios and validates CDC pipeline performance.
+### � Pipeline Monitoring  
+Script `monitoring_debezium.ps1` memberikan monitoring komprehensif:
+- Container health dan resource usage
+- Database connection dan performance
+- Kafka topics dan consumer groups
+- CDC connector status dan replication lag
+- WAL monitoring dan slot status
+- Performance metrics dan recommendations
 
-### 🚀 Features
+### 📁 Output & Logs
+Semua hasil test dan monitoring tersimpan di:
+- `testing-results/cdc-stress-test-[timestamp].log` - Detail insert test
+- `testing-results/cdc-resource-usage-[timestamp].log` - Resource monitoring
 
-* **✅ Real-time Data**: Fetches customers, products, and orders dynamically
-* **✅ No Hardcoded Values**: All test data is generated from live database
-* **✅ Auto-discovery**: Automatically detects Docker containers and schemas
-* **✅ Configurable**: Supports environment variables and config files
-* **✅ Performance Metrics**: Comprehensive performance and latency tracking
-* **✅ CDC Validation**: Validates replication accuracy and lag
-
-### 📁 Dynamic Testing Files
-
+**Contoh Performance Results:**
 ```
-scripts/
-├─ cdc_stress_test_dynamic.py         # Main dynamic testing script
-├─ setup-dynamic-env.ps1              # Environment setup script
-config.yaml                           # Configuration file
-requirements-dynamic.txt              # Python dependencies
+Test Duration: 00:00:44
+Throughput: 22.51 operations/second
+Success Rate: 100%
+Average Batch Time: 184.45ms
+Sync Status: SYNCHRONIZED
 ```
 
-### ⚡ Quick Setup
+### � Documentation
+- **[Scripts Quick Reference](docs/Scripts-Quick-Reference.md)** - Panduan penggunaan lengkap
+- **[Scripts Documentation](docs/Scripts-Documentation.md)** - Analisis output dan hasil
 
+---
+
+## 🔧 Advanced Configuration
+
+### Parameter Optimization
+- **Light Test**: `RecordCount=500, BatchSize=50`
+- **Standard Test**: `RecordCount=2000, BatchSize=200`
+- **Stress Test**: `RecordCount=10000, BatchSize=1000`
+- **Optimal Performance**: `BatchSize=500` (sweet spot)
+
+### Monitoring Strategy
 ```powershell
-# 1. Setup environment (PowerShell)
-.\scripts\setup-dynamic-env.ps1
+# Pre-test baseline
+.\scripts\monitoring_debezium.ps1
 
-# 2. Install Python dependencies
-pip install -r requirements.txt
+# Execute test
+.\scripts\insert_debezium.ps1 -RecordCount 5000 -BatchSize 500
 
-# 3. Run basic test
-python scripts/test_dynamic.py
+# Post-test analysis
+.\scripts\monitoring_debezium.ps1
 ```
-
-### 🎛️ Configuration Options
-
-#### Option 1: Environment Variables
-```powershell
-$env:DB_HOST = "localhost"
-$env:DB_PORT = "5432"
-$env:DB_SCHEMA = "inventory"
-# ... (run setup-dynamic-env.ps1 for complete setup)
-```
-
-#### Option 2: Configuration File (config.yaml)
-```yaml
-database:
-  host: localhost
-  port: 5432
-  schema: inventory
-  # ... (see config.yaml for full configuration)
-```
-
-### 🧪 Test Types & Usage
-
-#### 📊 INSERT Testing
-```bash
-# Basic insert test
-python scripts/cdc_stress_test_dynamic.py --test-type insert --records 1000
-
-# High-volume insert test
-python scripts/cdc_stress_test_dynamic.py --test-type insert --records 100000 --batch-size 1000
-
-# With custom configuration
-python scripts/cdc_stress_test_dynamic.py --config config.yaml --test-type insert --records 5000
-```
-
-#### 🔄 UPDATE Testing
-```bash
-# Update existing records
-python scripts/cdc_stress_test_dynamic.py --test-type update --records 500
-
-# Batch updates
-python scripts/cdc_stress_test_dynamic.py --test-type update --records 2000 --batch-size 200
-```
-
-#### 🗑️ DELETE Testing
-```bash
-# Delete records (uses oldest records first)
-python scripts/cdc_stress_test_dynamic.py --test-type delete --records 200
-
-# Batch deletes
-python scripts/cdc_stress_test_dynamic.py --test-type delete --records 1000 --batch-size 50
-```
-
-#### 🔀 MIXED Operations
-```bash
-# Mixed INSERT/UPDATE/DELETE operations
-python scripts/cdc_stress_test_dynamic.py --test-type mixed --records 2000
-
-# High-volume mixed operations
-python scripts/cdc_stress_test_dynamic.py --test-type mixed --records 50000 --batch-size 500
-```
-
-#### ✅ CDC Validation
-```bash
-# Validate CDC replication accuracy
-python scripts/cdc_stress_test_dynamic.py --test-type validate --records 1000
-```
-
-### 📈 Performance Metrics
-
-The dynamic testing provides comprehensive metrics:
-
-* **Operations/Second**: Real-time throughput measurement
-* **Success Rate**: Percentage of successful operations
-* **Replication Lag**: CDC latency in milliseconds
-* **Memory Usage**: Resource consumption tracking
-* **Docker Log Events**: CDC event monitoring
-* **Error Analysis**: Detailed error reporting
-
-### 📊 Sample Output
-
-```
-============================================================
-CDC DYNAMIC STRESS TEST SUMMARY
-============================================================
-Test Type: INSERT
-Records Processed: 10,000
-Duration: 45.23 seconds
-Operations/Second: 221.07
-Success Rate: 100.0%
-Memory Usage: 156.4 MB
-Docker Log Events: 10,000
-Replication Lag: 125.3 ms
-Results saved to: testing-results/cdc_stress_test_insert_20250118_143022.json
-============================================================
-```
-
-### 🎯 Key Advantages
-
-#### ✅ Dynamic vs Static Testing
-
-| Feature | Static (Old) | Dynamic (New) |
-|---------|-------------|---------------|
-| Customer IDs | Hardcoded [1001,1002...] | ✅ Real-time DB fetch |
-| Product IDs | Hardcoded [101-109] | ✅ Real-time DB fetch |
-| Container Names | Hardcoded strings | ✅ Auto-discovery |
-| Database Config | Fixed localhost:5432 | ✅ Environment/config |
-| Schema Handling | Fixed 'inventory' | ✅ Dynamic introspection |
-| Test Data | Artificial values | ✅ Live database data |
-
-#### 🚀 Benefits
-
-* **Realistic Testing**: Uses actual database state
-* **Production-Ready**: Reflects real-world scenarios
-* **Flexible Configuration**: Adapts to different environments
-* **Comprehensive Monitoring**: Tracks all performance aspects
-* **Error Resilience**: Handles missing data gracefully
-* **Scalable**: Supports high-volume testing
 
 ---
 
@@ -418,32 +385,23 @@ SELECT * FROM inventory.orders;
 
 ## 🛠️ Tech Stack
 
-* Debezium 2.6
-* Apache Kafka & Kafka Connect (Confluent)
-* PostgreSQL
-* Docker Compose
-* Kafdrop (Web UI)
+* **Debezium 2.6** - PostgreSQL CDC connector
+* **Apache Kafka & Kafka Connect** (Confluent) - Message streaming
+* **PostgreSQL** - Source and target databases  
+* **Docker Compose** - Container orchestration
+* **Kafdrop** - Kafka Web UI for monitoring
+* **PowerShell Scripts** - Automated testing and monitoring
 
 ---
 
-## 📖 References
+## 📖 References & Documentation
 
-* [Debezium Docs](https://debezium.io/documentation/)
+* **[Scripts Quick Reference](docs/Scripts-Quick-Reference.md)** - Complete usage guide
+* **[Scripts Documentation](docs/Scripts-Documentation.md)** - Output analysis and troubleshooting
+* [Debezium Documentation](https://debezium.io/documentation/)
 * [Kafka Connect JDBC Sink](https://docs.confluent.io/kafka-connect-jdbc/current/index.html)
-* [Docker Compose](https://docs.docker.com/compose/)
+* [Docker Compose Guide](https://docs.docker.com/compose/)
 
 ---
 
-## 📄 License
-
-MIT License
-© 2025 Julio-analyst
-
----
-
-## 📬 Contact
-
-* 🌐 [LinkedIn](https://www.linkedin.com/in/farrel-julio-427143288)
-* 📂 [Portfolio (Notion)](https://linktr.ee/Julio-analyst)
-* ✉️ [farelrel12345@gmail.com](mailto:farelrel12345@gmail.com)
 

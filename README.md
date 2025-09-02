@@ -128,7 +128,7 @@ curl -X POST -H "Content-Type: application/json" --data "@pg-sink.json" http://l
 
 
 
-<b>Insert Test Animation:</b><br>
+<br>
 <img src="docs/insert.gif" alt="Insert Test Animation" style="max-width:100%;height:auto;display:block;margin:auto;" loading="eager">
 
 ```powershell
@@ -141,7 +141,7 @@ Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 
 
 
-<b>Monitoring Animation:</b><br>
+<br>
 <img src="docs/monitor.gif" alt="Monitoring Animation" style="max-width:100%;height:auto;display:block;margin:auto;" loading="eager">
 
 ```powershell

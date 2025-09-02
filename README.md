@@ -125,16 +125,6 @@ curl -X POST -H "Content-Type: application/json" --data "@pg-sink.json" http://l
 
 
 ## PowerShell Scripts
-
-
-
-
-<br>
-<img src="docs/insert.gif" alt="Insert Test Animation" style="max-width:100%;height:auto;display:block;margin:auto;" loading="eager">
-=======
-<br>
-<img src="docs/insertvid-new.gif" alt="Insert Test Animation" style="max-width:100%;height:auto;display:block;margin:auto;" loading="eager">
-
 ```powershell
 # Set execution policy (jika diperlukan)
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
@@ -142,19 +132,15 @@ Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 # Jalankan insert test
 .\scripts\insert_debezium.ps1
 ```
-
-
-
 <br>
-<img src="docs/monitor.gif" alt="Monitoring Animation" style="max-width:100%;height:auto;display:block;margin:auto;" loading="eager">
-=======
-<br>
-<img src="docs/monitoringvid-new.gif" alt="Monitoring Animation" style="max-width:100%;height:auto;display:block;margin:auto;" loading="eager">
+<img src="docs/insertvid-new.gif" alt="Insert Test Animation" style="max-width:100%;height:auto;display:block;margin:auto;" loading="eager">
 
 ```powershell
 # Monitor pipeline performance
 .\scripts\monitoring_debezium.ps1
 ```
+<br>
+<img src="docs/monitoringvid-new.gif" alt="Monitoring Animation" style="max-width:100%;height:auto;display:block;margin:auto;" loading="eager">
 
 **Custom Insert Parameters:**
 ```powershell

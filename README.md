@@ -123,27 +123,26 @@ curl -X POST -H "Content-Type: application/json" --data "@inventory-source.json"
 curl -X POST -H "Content-Type: application/json" --data "@pg-sink.json" http://localhost:8083/connectors
 ```
 
-**PowerShell Scripts:**
+
+## PowerShell Scripts
+
+<b>Insert Test Video:</b><br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/cQlE0aZfuK8?autoplay=1" title="Insert Test Video" frameborder="0" allowfullscreen></iframe>
+
 ```powershell
 # Set execution policy (jika diperlukan)
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 
 # Jalankan insert test
 .\scripts\insert_debezium.ps1
+```
 
-.\scripts\monitoring_debezium.ps1
-<br>
-<b>Insert Test Video:</b><br>
-<b>Insert Test Video:</b><br>
-<iframe width="560" height="315" src="https://www.youtube.com/embed/cQlE0aZfuK8?autoplay=1" title="Insert Test Video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+<b>Monitoring Video:</b><br>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/YApYVxAmm0c?autoplay=1" title="Monitoring Video" frameborder="0" allowfullscreen></iframe>
 
+```powershell
 # Monitor pipeline performance
 .\scripts\monitoring_debezium.ps1
-
-<br>
-<b>Monitoring Video:</b><br>
-<b>Monitoring Video:</b><br>
-<iframe width="560" height="315" src="https://www.youtube.com/embed/YApYVxAmm0c?autoplay=1" title="Monitoring Video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 ```
 
 **Custom Insert Parameters:**

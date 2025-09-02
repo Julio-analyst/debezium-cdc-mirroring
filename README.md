@@ -67,8 +67,8 @@ Synchronizing data across systems in real time is a challenge. Traditional ETL t
 
 ```
 [Postgres Source] → [Debezium Source Connector] → [Kafka Broker] → [JDBC Sink Connector] → [Postgres Target]
-                                                         ↓
-                                           [Dynamic Testing & Monitoring]
+                                                         
+                                           
 ```
 
 **Components:**
